@@ -1,5 +1,7 @@
 package com.example.connectToPostgres;
 
+import com.example.connectToPostgres.domain.dto.AuthorDto;
+import com.example.connectToPostgres.domain.dto.BookDto;
 import com.example.connectToPostgres.domain.dto.entities.AuthorEntity;
 import com.example.connectToPostgres.domain.dto.entities.BookEntity;
 
@@ -35,6 +37,14 @@ public final class TestDataUtil {
                 .isbn("isbnTestA")
                 .title("tempA")
                 .author(author)
+                .build();
+    }
+
+    public static BookDto createTestBookDtoA(final AuthorDto authorDto) {
+        return BookDto.builder()
+                .isbn("isbnTestA")
+                .title("tempA")
+                .author(authorDto)
                 .build();
     }
 
