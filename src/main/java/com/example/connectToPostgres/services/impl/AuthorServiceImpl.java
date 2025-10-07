@@ -5,6 +5,10 @@ import com.example.connectToPostgres.repositories.AuthorRepositories;
 import com.example.connectToPostgres.services.AuthorService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
 @Service
 public class AuthorServiceImpl implements AuthorService {
 
@@ -17,5 +21,10 @@ public class AuthorServiceImpl implements AuthorService {
     @Override
     public AuthorEntity createAuthor(AuthorEntity author) {
         return authorRepositories.save(author);
+    }
+
+    @Override
+    public List<AuthorEntity> findAll() {
+       return StreamSupport.stream(authorRepositories.findAll().spliterator(), false).collect(Collectors.toList());
     }
 }

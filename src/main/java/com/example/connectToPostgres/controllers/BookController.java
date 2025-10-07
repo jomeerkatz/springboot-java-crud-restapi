@@ -3,7 +3,6 @@ package com.example.connectToPostgres.controllers;
 import com.example.connectToPostgres.domain.dto.BookDto;
 import com.example.connectToPostgres.domain.dto.entities.BookEntity;
 import com.example.connectToPostgres.mappers.Mapper;
-import com.example.connectToPostgres.mappers.impl.BookMapper;
 import com.example.connectToPostgres.services.BookService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,4 +29,5 @@ public class BookController {
         BookEntity savedBookEntity = bookService.createBook(isbn, bookEntity);
         return new ResponseEntity<>(bookMapper.mapTo(savedBookEntity), HttpStatus.CREATED);
     }
+
 }

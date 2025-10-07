@@ -3,6 +3,7 @@ package com.example.connectToPostgres.controllers;
 
 import com.example.connectToPostgres.TestDataUtil;
 import com.example.connectToPostgres.domain.dto.entities.AuthorEntity;
+import com.example.connectToPostgres.services.AuthorService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -26,12 +27,15 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 public class AuthorControllerIntegrationsTests {
     private MockMvc mockMvc;
 
+    private AuthorService authorService;
+
     private ObjectMapper objectMapper;
 
     @Autowired  // Weist Spring an, die MockMvc-Instanz automatisch zu injizieren, die durch @AutoConfigureMockMvc erstellt wurde
-    public AuthorControllerIntegrationsTests(MockMvc mockMvc, ObjectMapper objectMapper) {
+    public AuthorControllerIntegrationsTests(MockMvc mockMvc, ObjectMapper objectMapper, AuthorService authorService) {
         this.mockMvc = mockMvc;
         this.objectMapper = new ObjectMapper();
+        this.authorService = authorService;
     }
 
     @Test
@@ -61,6 +65,31 @@ public class AuthorControllerIntegrationsTests {
                 MockMvcResultMatchers.jsonPath("$.name").value("Jo meerkatz")
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$.age").value(80)
+        );
+    }
+
+    @Test
+    public void testThatListAuthorsReturnsHttpStatus200() throws Exception {
+        mockMvc.perform( // Simuliert einen HTTP Request
+                MockMvcRequestBuilders.get("/authors") // Erstellt einen GET-Request auf "/authors"
+                        .contentType(MediaType.APPLICATION_JSON) // Sagt "Ich erwarte/sende JSON"
+        ).andExpect(MockMvcResultMatchers.status().isOk()); // erwarte, dass der HTTP Status 200 (OK) ist
+    }
+
+    @Test
+    public void testThatListAuthorsReturnsListOfAuthors() throws Exception {
+        AuthorEntity authorEntity = authorService.createAuthor(TestDataUtil.createTestAuthorA());
+
+
+        mockMvc.perform( // Simuliert einen HTTP Request
+                MockMvcRequestBuilders.get("/authors") // Erstellt einen GET-Request auf "/authors"
+                        .contentType(MediaType.APPLICATION_JSON) // Sagt "Ich erwarte/sende JSON"
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[0].id").isNumber())
+        .andExpect(
+                MockMvcResultMatchers.jsonPath("$[0].name").value("Jo meerkatz")
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[0].age").value(80)
         );
     }
 
