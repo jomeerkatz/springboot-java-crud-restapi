@@ -6,6 +6,7 @@ import com.example.connectToPostgres.services.AuthorService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -19,12 +20,24 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public AuthorEntity createAuthor(AuthorEntity author) {
+    public AuthorEntity save(AuthorEntity author) {
         return authorRepositories.save(author);
     }
 
     @Override
     public List<AuthorEntity> findAll() {
-       return StreamSupport.stream(authorRepositories.findAll().spliterator(), false).collect(Collectors.toList());
+       return StreamSupport.
+               stream(authorRepositories.findAll().spliterator(), false)
+               .collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<AuthorEntity> findOne(Long id) {
+        return authorRepositories.findById(id);
+    }
+
+    @Override
+    public boolean isExisting(Long id) {
+        return authorRepositories.existsById(id);
     }
 }
