@@ -21,7 +21,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public BookEntity createBook(String isbn, BookEntity bookEntity) {
+    public BookEntity createUpdateBook(String isbn, BookEntity bookEntity) {
         bookEntity.setIsbn(isbn);
         return bookRepositories.save(bookEntity);
     }
@@ -36,5 +36,10 @@ public class BookServiceImpl implements BookService {
     @Override
     public Optional<BookEntity> findOne(String isbn) {
         return bookRepositories.findById(isbn);
+    }
+
+    @Override
+    public Boolean isExists(String isbn) {
+        return bookRepositories.existsById(isbn);
     }
 }
