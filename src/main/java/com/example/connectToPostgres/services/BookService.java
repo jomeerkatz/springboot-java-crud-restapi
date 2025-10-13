@@ -1,5 +1,6 @@
 package com.example.connectToPostgres.services;
 
+import com.example.connectToPostgres.domain.dto.BookDto;
 import com.example.connectToPostgres.domain.dto.entities.BookEntity;
 
 import java.util.List;
@@ -14,5 +15,7 @@ public interface BookService {
     Optional<BookEntity> findOne(String isbn);
 
     Boolean isExists(String isbn);
+
+    BookEntity partialUpdate(String isbn, BookEntity bookEntity);
 
 }

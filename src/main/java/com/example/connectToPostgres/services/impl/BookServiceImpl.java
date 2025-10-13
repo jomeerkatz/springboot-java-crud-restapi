@@ -1,5 +1,6 @@
 package com.example.connectToPostgres.services.impl;
 
+import com.example.connectToPostgres.domain.dto.BookDto;
 import com.example.connectToPostgres.domain.dto.entities.AuthorEntity;
 import com.example.connectToPostgres.domain.dto.entities.BookEntity;
 import com.example.connectToPostgres.repositories.BookRepositories;
@@ -41,5 +42,14 @@ public class BookServiceImpl implements BookService {
     @Override
     public Boolean isExists(String isbn) {
         return bookRepositories.existsById(isbn);
+    }
+
+    @Override
+    public BookEntity partialUpdate(String isbn, BookEntity bookEntity) {
+        bookEntity.setIsbn(isbn);
+        return bookRepositories.findById(isbn).map(existingBook -> {
+            Optional.ofNullable(bookEntity.getTitle()).ifPresent(existingBook::setTitle);
+            return bookRepositories.save(existingBook);
+        }).orElseThrow(() -> new RuntimeException("Book does not exists!"));
     }
 }
