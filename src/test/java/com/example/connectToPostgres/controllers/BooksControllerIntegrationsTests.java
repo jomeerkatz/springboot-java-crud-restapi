@@ -212,5 +212,25 @@ public class BooksControllerIntegrationsTests {
                 MockMvcResultMatchers.jsonPath("$.title").value("NEW PARTIAL UPDATE HERE")
         );
     }
+
+    @Test
+    public void TestThatDeleteBookReturnsHttpStatus404ForNonExistingIsbn() throws Exception{
+        mockMvc.perform(
+                MockMvcRequestBuilders.delete("/books/123")
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(MockMvcResultMatchers.status().isNoContent());
+    }
+
+    @Test
+    public void TestThatDeleteBookReturnsHttpStatus204NoContent() throws Exception{
+        // create db record so we can update SOMETHING
+        BookEntity bookEntity = TestDataUtil.createTestBookB(null);
+        BookEntity savedBookEntity = bookService.createUpdateBook(bookEntity.getIsbn(), bookEntity); // push into db
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.delete("/books/" + savedBookEntity.getIsbn() )
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(MockMvcResultMatchers.status().isNoContent());
+    }
 }
 
