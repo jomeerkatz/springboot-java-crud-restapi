@@ -226,4 +226,23 @@ public class AuthorControllerIntegrationsTests {
         );
     }
 
+    @Test
+    public void TestThatDeleteAuthorReturnsHttpStatus404ForNonExistingId() throws Exception {
+        mockMvc.perform(
+                MockMvcRequestBuilders.delete("/authors/999")
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(MockMvcResultMatchers.status().isNoContent());
+    }
+
+    @Test
+    public void TestThatDeleteAuthorReturnsHttpStatus402ForExistingId() throws Exception {
+        AuthorEntity authorEntity = TestDataUtil.createTestAuthorA();
+        AuthorEntity savedAuthorEntity = authorService.save(authorEntity); // now, one record is in the db
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.delete("/authors/" + savedAuthorEntity.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(MockMvcResultMatchers.status().isNoContent());
+    }
+
 }
