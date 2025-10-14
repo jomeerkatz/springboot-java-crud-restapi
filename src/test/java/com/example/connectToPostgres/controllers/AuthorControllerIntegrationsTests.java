@@ -5,9 +5,11 @@ import com.example.connectToPostgres.TestDataUtil;
 import com.example.connectToPostgres.domain.dto.AuthorDto;
 import com.example.connectToPostgres.domain.dto.entities.AuthorEntity;
 import com.example.connectToPostgres.services.AuthorService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -180,6 +182,47 @@ public class AuthorControllerIntegrationsTests {
                 MockMvcResultMatchers.jsonPath("$.name").value(authorEntityB.getName())
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$.age").value(authorEntityB.getAge())
+        );
+    }
+
+    @Test
+    public void TestThatPartialUpdateAuthorReturnsHttpStatus200Ok() throws Exception {
+        AuthorEntity authorEntity = TestDataUtil.createTestAuthorA();
+        AuthorEntity savedAuthorEntity = authorService.save(authorEntity); // now, one record is in the db
+
+        AuthorDto authorDto = TestDataUtil.createTestAuthorADto();
+        authorDto.setName("UPDATED");
+        String authorDtoJson = objectMapper.writeValueAsString(authorDto);
+
+        mockMvc.perform( // Simuliert einen HTTP Request
+                MockMvcRequestBuilders.patch("/authors/" + savedAuthorEntity.getId()) // Erstellt einen GET-Request auf "/authors"
+                        .contentType(MediaType.APPLICATION_JSON) // Sagt "Ich erwarte/sende JSON"
+                        .content(authorDtoJson)
+        ).andExpect(
+                MockMvcResultMatchers.status().isOk()
+        );
+    }
+
+    @Test
+    public void TestThatPartialUpdateAuthorReturnsUpdatedAuthor() throws Exception {
+        AuthorEntity authorEntity = TestDataUtil.createTestAuthorA();
+        AuthorEntity savedAuthorEntity = authorService.save(authorEntity); // now, one record is in the db
+
+        AuthorDto authorDto = TestDataUtil.createTestAuthorADto();
+        authorDto.setName("UPDATED NAME"); // update 1
+
+        String authorJSON = objectMapper.writeValueAsString(authorDto);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.patch("/authors/" + savedAuthorEntity.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(authorJSON)
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.name").value("UPDATED NAME")
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.id").value(savedAuthorEntity.getId())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.age").value(savedAuthorEntity.getAge())
         );
     }
 

@@ -4,6 +4,7 @@ import com.example.connectToPostgres.domain.dto.AuthorDto;
 import com.example.connectToPostgres.domain.dto.entities.AuthorEntity;
 import com.example.connectToPostgres.mappers.Mapper;
 import com.example.connectToPostgres.services.AuthorService;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -62,4 +63,15 @@ public class AuthorController {
         return new ResponseEntity<>(updatedAuthorDto, HttpStatus.OK);
     }
 
+
+    @PatchMapping(path="/authors/{id}")
+    public ResponseEntity<AuthorDto> partialUpdate(@PathVariable("id") Long id, @RequestBody AuthorDto authorDto) {
+        if(!authorService.isExisting(id)) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        AuthorEntity authorEntity = authorMapper.mapFrom(authorDto);
+        AuthorEntity partialUpdateAuthor = authorService.partialUpdate(id, authorEntity);
+
+        return new ResponseEntity<>(authorMapper.mapTo(partialUpdateAuthor), HttpStatus.OK);
+    }
 }
