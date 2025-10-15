@@ -35,7 +35,7 @@ public class BookController {
         if(bookExists) {
             return new ResponseEntity<>(savedBookDto, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(bookDto, HttpStatus.CREATED);
+            return new ResponseEntity<>(savedBookDto, HttpStatus.CREATED);
         }
     }
 
